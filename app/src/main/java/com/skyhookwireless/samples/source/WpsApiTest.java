@@ -52,12 +52,10 @@ import com.skyhookwireless.wps.WPSStreetAddressLookup;
 import com.skyhookwireless.wps.XPS;
 
 public class WpsApiTest
-    extends Activity
-    implements OnSharedPreferenceChangeListener
-{
+        extends Activity
+        implements OnSharedPreferenceChangeListener {
     @Override
-    public void onCreate(final Bundle savedInstanceState)
-    {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // create the XPS instance, passing in our Context
@@ -66,7 +64,7 @@ public class WpsApiTest
 
         // listen for settings changes
         final SharedPreferences preferences =
-            PreferenceManager.getDefaultSharedPreferences(this);
+                PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);
         // read existing preferences
         onSharedPreferenceChanged(preferences, "Local File Path");
@@ -79,9 +77,9 @@ public class WpsApiTest
         _maxDataSizeTotal = Long.valueOf(preferences.getString("Max Data Total", "0"));
         final String serverUrl = preferences.getString(SERVER_URL_KEY, "");
         _xps.setTiling(_tilingPath,
-                       _maxDataSizePerSession,
-                       _maxDataSizeTotal,
-                       null);
+                _maxDataSizePerSession,
+                _maxDataSizeTotal,
+                null);
 
         if (serverUrl.length() > 0)
             XPS.setServerUrl(serverUrl);
@@ -126,15 +124,15 @@ public class WpsApiTest
         // available screen and the Location display takes up the remaining 30.
 
         _buttonLayout.addView(_scrollingButtons,
-                              new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,
-                                                            0,
-                                                            0.8f ));
+                new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,
+                        0,
+                        0.8f));
 
         // create the location layout
         _buttonLayout.addView(_scrollingText,
-                              new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,
-                                                            0,
-                                                            0.2f));
+                new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,
+                        0,
+                        0.2f));
 
         setKey(preferences.getString("Key", ""));
 
@@ -143,8 +141,7 @@ public class WpsApiTest
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
 
         // make sure WPS is stopped
@@ -152,8 +149,7 @@ public class WpsApiTest
     }
 
     @Override
-    public void onConfigurationChanged(final Configuration newConfig)
-    {
+    public void onConfigurationChanged(final Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 
@@ -167,16 +163,13 @@ public class WpsApiTest
 
     // add the 'Settings' button which leads to all the
     // WPS settings.
-    private Button addSettingsButton(final ViewGroup layout)
-    {
+    private Button addSettingsButton(final ViewGroup layout) {
         final Button settingsButton = new Button(this);
         settingsButton.setText("Settings");
-        settingsButton.setOnClickListener(new OnClickListener()
-        {
-            public void onClick(final View v)
-            {
+        settingsButton.setOnClickListener(new OnClickListener() {
+            public void onClick(final View v) {
                 final Intent launchPreferencesIntent =
-                    new Intent().setClass(WpsApiTest.this, Preferences.class);
+                        new Intent().setClass(WpsApiTest.this, Preferences.class);
                 startActivity(launchPreferencesIntent);
             }
         });
@@ -189,60 +182,53 @@ public class WpsApiTest
      * all location notifications sent by WPS to our app.
      */
     private class MyLocationCallback
-        implements IPLocationCallback,
-                   WPSLocationCallback,
-                   WPSPeriodicLocationCallback,
-                   WPSCertifiedLocationCallback
-    {
-        public void done()
-        {
+            implements IPLocationCallback,
+            WPSLocationCallback,
+            WPSPeriodicLocationCallback,
+            WPSCertifiedLocationCallback {
+        public void done() {
             // tell the UI thread to re-enable the buttons
             _handler.sendMessage(_handler.obtainMessage(DONE_MESSAGE));
         }
 
-        public WPSContinuation handleError(final WPSReturnCode error)
-        {
+        public WPSContinuation handleError(final WPSReturnCode error) {
             // send a message to display the error
             _handler.sendMessage(_handler.obtainMessage(ERROR_MESSAGE,
-                                                        error));
+                    error));
             // return WPS_STOP if the user pressed the Stop button
-            if (! _stop)
+            if (!_stop)
                 return WPSContinuation.WPS_CONTINUE;
             else
                 return WPSContinuation.WPS_STOP;
         }
 
-        public void handleIPLocation(final IPLocation location)
-        {
+        public void handleIPLocation(final IPLocation location) {
             // send a message to display the location
             _handler.sendMessage(_handler.obtainMessage(LOCATION_MESSAGE,
-                                                        location));
+                    location));
         }
 
-        public void handleWPSLocation(final WPSLocation location)
-        {
+        public void handleWPSLocation(final WPSLocation location) {
             // send a message to display the location
             _handler.sendMessage(_handler.obtainMessage(LOCATION_MESSAGE,
-                                                        location));
+                    location));
         }
 
-        public WPSContinuation handleWPSPeriodicLocation(final WPSLocation location)
-        {
+        public WPSContinuation handleWPSPeriodicLocation(final WPSLocation location) {
             _handler.sendMessage(_handler.obtainMessage(LOCATION_MESSAGE,
-                                                        location));
+                    location));
             // return WPS_STOP if the user pressed the Stop button
-            if (! _stop)
+            if (!_stop)
                 return WPSContinuation.WPS_CONTINUE;
             else
                 return WPSContinuation.WPS_STOP;
         }
 
-        public WPSContinuation handleWPSCertifiedLocation(final WPSLocation[] locations)
-        {
+        public WPSContinuation handleWPSCertifiedLocation(final WPSLocation[] locations) {
             _handler.sendMessage(_handler.obtainMessage(LOCATION_LIST_MESSAGE,
-                                                        locations));
+                    locations));
             // return WPS_STOP if the user pressed the Stop button
-            if (! _stop)
+            if (!_stop)
                 return WPSContinuation.WPS_CONTINUE;
             else
                 return WPSContinuation.WPS_STOP;
@@ -251,42 +237,36 @@ public class WpsApiTest
 
     private final MyLocationCallback _callback = new MyLocationCallback();
 
-    private Button addIPLocationButton(final ViewGroup layout)
-    {
+    private Button addIPLocationButton(final ViewGroup layout) {
         final Button ipLocationButton = new Button(this);
         ipLocationButton.setText("Get IP Location");
 
-        ipLocationButton.setOnClickListener(new OnClickListener()
-        {
-            public void onClick(final View v)
-            {
+        ipLocationButton.setOnClickListener(new OnClickListener() {
+            public void onClick(final View v) {
                 activateStopButton();
                 _tv.setText("");
                 _xps.getIPLocation(null,
-                                   _streetAddressLookup,
-                                   _callback);
+                        _streetAddressLookup,
+                        _callback);
             }
         });
         layout.addView(ipLocationButton);
         return ipLocationButton;
     }
 
-    private Button addWPSPeriodicLocationButton(final ViewGroup layout)
-    {
+    private Button addWPSPeriodicLocationButton(final ViewGroup layout) {
         final Button wpsLocationButton = new Button(this);
         wpsLocationButton.setText("Get WPS Periodic Location");
 
-        wpsLocationButton.setOnClickListener(new OnClickListener()
-        {
-            public void onClick(final View v)
-            {
+        wpsLocationButton.setOnClickListener(new OnClickListener() {
+            public void onClick(final View v) {
                 activateStopButton();
                 _tv.setText("");
                 _xps.getPeriodicLocation(null,
-                                         _streetAddressLookup,
-                                         _period,
-                                         _iterations,
-                                         _callback);
+                        _streetAddressLookup,
+                        _period,
+                        _iterations,
+                        _callback);
 
             }
         });
@@ -294,56 +274,47 @@ public class WpsApiTest
         return wpsLocationButton;
     }
 
-    private Button addWPSLocationButton(final ViewGroup layout)
-    {
+    private Button addWPSLocationButton(final ViewGroup layout) {
         final Button wpsLocationButton = new Button(this);
         wpsLocationButton.setText("Get WPS Location");
 
-        wpsLocationButton.setOnClickListener(new OnClickListener()
-        {
-            public void onClick(final View v)
-            {
+        wpsLocationButton.setOnClickListener(new OnClickListener() {
+            public void onClick(final View v) {
                 activateStopButton();
                 _tv.setText("");
                 _xps.getLocation(null,
-                                 _streetAddressLookup,
-                                 _callback);
+                        _streetAddressLookup,
+                        _callback);
             }
         });
         layout.addView(wpsLocationButton);
         return wpsLocationButton;
     }
 
-    private Button addXPSLocationButton(final ViewGroup layout)
-    {
+    private Button addXPSLocationButton(final ViewGroup layout) {
         final Button xpsLocationButton = new Button(this);
         xpsLocationButton.setText("Get XPS Location");
-        xpsLocationButton.setOnClickListener(new OnClickListener()
-        {
-            public void onClick(final View v)
-            {
+        xpsLocationButton.setOnClickListener(new OnClickListener() {
+            public void onClick(final View v) {
                 activateStopButton();
                 _tv.setText("");
                 _xps.getXPSLocation(null,
-                                    // note we convert _period to seconds
-                                    (int) (_period / 1000),
-                                    _desiredXpsAccuracy,
-                                    _callback);
+                        // note we convert _period to seconds
+                        (int) (_period / 1000),
+                        _desiredXpsAccuracy,
+                        _callback);
             }
         });
         layout.addView(xpsLocationButton);
         return xpsLocationButton;
     }
 
-    private Button addWPSCertifiedLocationButton(final ViewGroup layout)
-    {
+    private Button addWPSCertifiedLocationButton(final ViewGroup layout) {
         final Button button = new Button(this);
         button.setText("Get XPS Certified Location");
 
-        button.setOnClickListener(new OnClickListener()
-        {
-            public void onClick(final View v)
-            {
+        button.setOnClickListener(new OnClickListener() {
+            public void onClick(final View v) {
                 activateStopButton();
                 _tv.setText("");
                 _xps.getCertifiedLocation(null, _streetAddressLookup, _callback);
@@ -356,78 +327,68 @@ public class WpsApiTest
     /**
      * Starting with API version 18, Android supports Wi-Fi scanning when Wi-Fi is
      * disabled for connectivity purposes.
-     *
+     * <p>
      * To improve location accuracy we encourage users to enable this feature.
      * The code below provides a simple example where we use Android's built
      * in dialog to notify the user.
      */
-    private void notifyAlwaysAllowScanning()
-    {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-        {
+    private void notifyAlwaysAllowScanning() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             final WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
-            if (! wifi.isWifiEnabled() && ! wifi.isScanAlwaysAvailable())
-            {
+            if (!wifi.isWifiEnabled() && !wifi.isScanAlwaysAvailable()) {
                 final Intent intent =
-                    new Intent(WifiManager.ACTION_REQUEST_SCAN_ALWAYS_AVAILABLE);
+                        new Intent(WifiManager.ACTION_REQUEST_SCAN_ALWAYS_AVAILABLE);
                 startActivityForResult(intent, 1);
             }
         }
     }
 
-    private void notifyLocationSetting()
-    {
+    private void notifyLocationSetting() {
         final LocationManager locationManager =
-            (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         final boolean networkEnabled =
-            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         final boolean gpsEnabled =
-            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-        if (! networkEnabled && ! gpsEnabled)
+        if (!networkEnabled && !gpsEnabled)
             displayLocationDialog("Location services disabled",
-                                  "Location services have been disabled. Please enable location.");
-        else if (! networkEnabled)
+                    "Location services have been disabled. Please enable location.");
+        else if (!networkEnabled)
             displayLocationDialog("Location performance",
-                                  "Location performance will be improved by enabling network based location.");
-        else if (! gpsEnabled)
+                    "Location performance will be improved by enabling network based location.");
+        else if (!gpsEnabled)
             displayLocationDialog("Location performance",
-                                  "Location performance will be improved by enabling gps based location.");
+                    "Location performance will be improved by enabling gps based location.");
     }
 
-    private void displayLocationDialog(final String title, final String message)
-    {
+    private void displayLocationDialog(final String title, final String message) {
         final DialogInterface.OnClickListener launchSettings =
-            new DialogInterface.OnClickListener()
-            {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-                    final Intent locationSettingIntent =
-                        new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(locationSettingIntent);
-                }
-            };
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final Intent locationSettingIntent =
+                                new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(locationSettingIntent);
+                    }
+                };
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(title)
-               .setMessage(message)
-               .setPositiveButton("Settings", launchSettings)
-               .setNegativeButton("Cancel", null)
-               .create()
-               .show();
+                .setMessage(message)
+                .setPositiveButton("Settings", launchSettings)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
 
-    private Button addStopButton(final ViewGroup layout)
-    {
+    private Button addStopButton(final ViewGroup layout) {
         final Button stopButton = new Button(this);
         stopButton.setText("Stop");
-        stopButton.setOnClickListener(new OnClickListener()
-        {
-            public void onClick(final View v)
-            {
+        stopButton.setOnClickListener(new OnClickListener() {
+            public void onClick(final View v) {
                 _stop = true;
                 stopButton.setEnabled(false);
             }
@@ -436,14 +397,11 @@ public class WpsApiTest
         return stopButton;
     }
 
-    private Button addAbortButton(final ViewGroup layout)
-    {
+    private Button addAbortButton(final ViewGroup layout) {
         final Button abortButton = new Button(this);
         abortButton.setText("Abort");
-        abortButton.setOnClickListener(new OnClickListener()
-        {
-            public void onClick(final View v)
-            {
+        abortButton.setOnClickListener(new OnClickListener() {
+            public void onClick(final View v) {
                 _xps.abort();
             }
         });
@@ -451,19 +409,15 @@ public class WpsApiTest
         return abortButton;
     }
 
-    private void activateStopButton()
-    {
-        for (final View view : _viewsToDisable)
-        {
+    private void activateStopButton() {
+        for (final View view : _viewsToDisable) {
             view.setEnabled(false);
         }
         _stopButton.setEnabled(true);
     }
 
-    private void deactivateStopButton()
-    {
-        for (final View view : _viewsToDisable)
-        {
+    private void deactivateStopButton() {
+        for (final View view : _viewsToDisable) {
             view.setEnabled(true);
         }
         _stopButton.setEnabled(false);
@@ -477,39 +431,34 @@ public class WpsApiTest
     private static final int REGISTRATION_ERROR_MESSAGE = 5;
     private static final int LOCATION_LIST_MESSAGE = 6;
 
-    private void setUIHandler()
-    {
-        _handler = new Handler()
-        {
+    private void setUIHandler() {
+        _handler = new Handler() {
             @Override
-            public void handleMessage(final Message msg)
-            {
-                switch (msg.what)
-                {
-                case LOCATION_MESSAGE:
-                    _tv.setText(((Location) msg.obj).toString());
-                    return;
-                case LOCATION_LIST_MESSAGE:
-                    {
+            public void handleMessage(final Message msg) {
+                switch (msg.what) {
+                    case LOCATION_MESSAGE:
+                        _tv.setText(((Location) msg.obj).toString());
+                        return;
+                    case LOCATION_LIST_MESSAGE: {
                         final StringBuilder sb = new StringBuilder();
                         for (final Location location : (Location[]) msg.obj)
-                            sb.append(location+"\n\n");
+                            sb.append(location + "\n\n");
                         _tv.setText(sb.toString());
                     }
                     return;
-                case ERROR_MESSAGE:
-                    _tv.setText(((WPSReturnCode) msg.obj).name());
-                    return;
-                case DONE_MESSAGE:
-                    deactivateStopButton();
-                    _stop = false;
-                    return;
-                case REGISTRATION_SUCCESS_MESSAGE:
-                    _tv.setText("Registration succeeded");
-                    return;
-                case REGISTRATION_ERROR_MESSAGE:
-                    _tv.setText("Registration failed ("+((WPSReturnCode) msg.obj).name()+")");
-                    return;
+                    case ERROR_MESSAGE:
+                        _tv.setText(((WPSReturnCode) msg.obj).name());
+                        return;
+                    case DONE_MESSAGE:
+                        deactivateStopButton();
+                        _stop = false;
+                        return;
+                    case REGISTRATION_SUCCESS_MESSAGE:
+                        _tv.setText("Registration succeeded");
+                        return;
+                    case REGISTRATION_ERROR_MESSAGE:
+                        _tv.setText("Registration failed (" + ((WPSReturnCode) msg.obj).name() + ")");
+                        return;
                 }
             }
         };
@@ -519,83 +468,72 @@ public class WpsApiTest
      * Preferences management code
      */
     public static class Preferences
-        extends PreferenceActivity
-    {
+            extends PreferenceActivity {
         @Override
-        public void onCreate(final Bundle savedInstanceState)
-        {
+        public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            if (options == null)
-            {
+            if (options == null) {
                 options = new Option[]
-                    {
-                        new Option("Key"                      , OptionType.TEXT, null),
-                        new Option(SERVER_URL_KEY             , OptionType.TEXT, null),
-                        new Option("Local File Path"          , OptionType.TEXT, null),
-                        new Option("Period"                   , OptionType.NONNEGATIVE_INTEGER, null),
-                        new Option("Iterations"               , OptionType.NONNEGATIVE_INTEGER, null),
-                        new Option("Desired XPS Accuracy"     , OptionType.NONNEGATIVE_INTEGER, null),
-                        new Option("Tiling Path"              , OptionType.TEXT, getFilesDir().getAbsolutePath()),
-                        new Option("Max Data Per Session"     , OptionType.NONNEGATIVE_INTEGER, null),
-                        new Option("Max Data Total"           , OptionType.NONNEGATIVE_INTEGER, null),
-                        new ListOption("Street Address Lookup", OptionType.LIST, null, new String[] {"None", "Limited", "Full"})
-                    };
+                        {
+                                new Option("Key", OptionType.TEXT, null),
+                                new Option(SERVER_URL_KEY, OptionType.TEXT, null),
+                                new Option("Local File Path", OptionType.TEXT, null),
+                                new Option("Period", OptionType.NONNEGATIVE_INTEGER, null),
+                                new Option("Iterations", OptionType.NONNEGATIVE_INTEGER, null),
+                                new Option("Desired XPS Accuracy", OptionType.NONNEGATIVE_INTEGER, null),
+                                new Option("Tiling Path", OptionType.TEXT, getFilesDir().getAbsolutePath()),
+                                new Option("Max Data Per Session", OptionType.NONNEGATIVE_INTEGER, null),
+                                new Option("Max Data Total", OptionType.NONNEGATIVE_INTEGER, null),
+                                new ListOption("Street Address Lookup", OptionType.LIST, null, new String[]{"None", "Limited", "Full"})
+                        };
             }
 
             setPreferenceScreen(createRootPreferenceScreen());
         }
 
-        private PreferenceScreen createRootPreferenceScreen()
-        {
+        private PreferenceScreen createRootPreferenceScreen() {
             final PreferenceScreen root =
-                getPreferenceManager().createPreferenceScreen(this);
+                    getPreferenceManager().createPreferenceScreen(this);
 
             final PreferenceCategory category = new PreferenceCategory(this);
             category.setTitle("WpsApiTest Settings");
             root.addPreference(category);
 
-            for (final Option option : options)
-            {
+            for (final Option option : options) {
                 Preference setting = null;
-                switch (option.type)
-                {
-                case CHECKBOX:
-                {
-                    setting = new CheckBoxPreference(this);
-                    break;
-                }
-                case LIST:
-                {
-                    if (option instanceof ListOption)
-                    {
-                        final ListPreference listSetting = new ListPreference(this);
-                        final String[] entries = ((ListOption)option).entries;
-                        listSetting.setEntries(entries);
-                        listSetting.setEntryValues(entries);
-                        setting = listSetting;
+                switch (option.type) {
+                    case CHECKBOX: {
+                        setting = new CheckBoxPreference(this);
                         break;
                     }
-                }
-                default:
-                {
-                    final EditTextPreference textSetting = new EditTextPreference(this);
-                    textSetting.getEditText().setSingleLine();
-                    textSetting.getEditText().setFilters(new InputFilter[]
-                    {
-                        new InputFilter.LengthFilter(512)
-                    });
+                    case LIST: {
+                        if (option instanceof ListOption) {
+                            final ListPreference listSetting = new ListPreference(this);
+                            final String[] entries = ((ListOption) option).entries;
+                            listSetting.setEntries(entries);
+                            listSetting.setEntryValues(entries);
+                            setting = listSetting;
+                            break;
+                        }
+                    }
+                    default: {
+                        final EditTextPreference textSetting = new EditTextPreference(this);
+                        textSetting.getEditText().setSingleLine();
+                        textSetting.getEditText().setFilters(new InputFilter[]
+                                {
+                                        new InputFilter.LengthFilter(512)
+                                });
 
-                    if (option.type == OptionType.NONNEGATIVE_INTEGER)
-                        textSetting.getEditText()
-                                   .setKeyListener(new DigitsKeyListener(false,
-                                                                         false));
-                    setting = textSetting;
-                }
+                        if (option.type == OptionType.NONNEGATIVE_INTEGER)
+                            textSetting.getEditText()
+                                    .setKeyListener(new DigitsKeyListener(false,
+                                            false));
+                        setting = textSetting;
+                    }
                 }
 
-                if (setting != null)
-                {
+                if (setting != null) {
                     setting.setKey(option.name);
                     setting.setTitle(option.name);
                     if (option.defaultValue != null)
@@ -608,18 +546,15 @@ public class WpsApiTest
             return root;
         }
 
-        private enum OptionType
-        {
+        private enum OptionType {
             TEXT,
             NONNEGATIVE_INTEGER,
             LIST,
             CHECKBOX;
         }
 
-        private class Option
-        {
-            private Option(final String name, final OptionType type, final Object defaultValue)
-            {
+        private class Option {
+            private Option(final String name, final OptionType type, final Object defaultValue) {
                 super();
                 this.name = name;
                 this.type = type;
@@ -631,10 +566,8 @@ public class WpsApiTest
             Object defaultValue;
         }
 
-        private class ListOption extends Option
-        {
-            private ListOption(final String name, final OptionType type, final Object defaultValue, final String[] entries)
-            {
+        private class ListOption extends Option {
+            private ListOption(final String name, final OptionType type, final Object defaultValue, final String[] entries) {
                 super(name, type, defaultValue);
                 this.entries = entries;
             }
@@ -646,10 +579,8 @@ public class WpsApiTest
     }
 
     public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences,
-                                          final String key)
-    {
-        if (sharedPreferences.getString(key, "default").equals(""))
-        {
+                                          final String key) {
+        if (sharedPreferences.getString(key, "default").equals("")) {
             // delete empty preferences so we get the default values below
             final Editor editor = sharedPreferences.edit();
             editor.remove(key);
@@ -658,97 +589,67 @@ public class WpsApiTest
 
         boolean tilingChanged = false;
 
-        if (key.equals("Key"))
-        {
+        if (key.equals("Key")) {
             setKey(sharedPreferences.getString(key, ""));
-        }
-        else if (key.equals("Local File Path"))
-        {
+        } else if (key.equals("Local File Path")) {
             _localFilePath = sharedPreferences.getString(key, "");
             // TODO: clean this up?
             ArrayList<String> paths = null;
-            if (! _localFilePath.equals(""))
-            {
+            if (!_localFilePath.equals("")) {
                 paths = new ArrayList<String>(Arrays.asList(new String[]{_localFilePath}));
             }
             _xps.setLocalFilePaths(paths);
             return;
-        }
-        else if (key.equals("Period"))
-        {
+        } else if (key.equals("Period")) {
             _period = Long.valueOf(sharedPreferences.getString(key, "5000"));
             return;
-        }
-        else if (key.equals("Iterations"))
-        {
+        } else if (key.equals("Iterations")) {
             _iterations = Integer.valueOf(sharedPreferences.getString(key, "1"));
             return;
-        }
-        else if (key.equals("Desired XPS Accuracy"))
-        {
+        } else if (key.equals("Desired XPS Accuracy")) {
             _desiredXpsAccuracy = Integer.valueOf(sharedPreferences.getString(key, "30"));
             return;
-        }
-        else if (key.equals("Tiling Path"))
-        {
+        } else if (key.equals("Tiling Path")) {
             _tilingPath = sharedPreferences.getString(key, "");
             tilingChanged = true;
-        }
-        else if (key.equals("Max Data Per Session"))
-        {
+        } else if (key.equals("Max Data Per Session")) {
             _maxDataSizePerSession = Long.valueOf(sharedPreferences.getString(key, "0"));
             tilingChanged = true;
-        }
-        else if (key.equals("Max Data Total"))
-        {
+        } else if (key.equals("Max Data Total")) {
             _maxDataSizeTotal = Long.valueOf(sharedPreferences.getString(key, "0"));
             tilingChanged = true;
-        }
-        else if (key.equals("Street Address Lookup"))
-        {
+        } else if (key.equals("Street Address Lookup")) {
             final String setting = sharedPreferences.getString(key, "None");
-            if (setting.equals("None"))
-            {
+            if (setting.equals("None")) {
                 _streetAddressLookup = WPSStreetAddressLookup.WPS_NO_STREET_ADDRESS_LOOKUP;
-            }
-            else if (setting.equals("Limited"))
-            {
+            } else if (setting.equals("Limited")) {
                 _streetAddressLookup = WPSStreetAddressLookup.WPS_LIMITED_STREET_ADDRESS_LOOKUP;
-            }
-            else if (setting.equals("Full"))
-            {
+            } else if (setting.equals("Full")) {
                 _streetAddressLookup = WPSStreetAddressLookup.WPS_FULL_STREET_ADDRESS_LOOKUP;
             }
             return;
-        }
-        else if (key.equals(SERVER_URL_KEY))
-        {
+        } else if (key.equals(SERVER_URL_KEY)) {
             final String serverUrl = sharedPreferences.getString(SERVER_URL_KEY, "");
             XPS.setServerUrl(serverUrl.length() > 0 ? serverUrl : null);
             return;
         }
 
-        if (tilingChanged)
-        {
+        if (tilingChanged) {
             _xps.setTiling(_tilingPath,
-                           _maxDataSizePerSession,
-                           _maxDataSizeTotal,
-                           null);
+                    _maxDataSizePerSession,
+                    _maxDataSizeTotal,
+                    null);
         }
     }
 
-    private void setKey(String key)
-    {
+    private void setKey(String key) {
         if (key.equals(""))
             return;
 
-        try
-        {
+        try {
             _xps.setKey(key);
             _tv.setText("");
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             _tv.setText("The current API key is invalid. Please update it in settings.");
         }
     }
